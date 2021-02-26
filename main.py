@@ -10,9 +10,13 @@ Returns:
     All the fertile land area in square meters, sorted from smallest area to greatest, separated by a space.
 Raises:
     SyntaxError when input data is invalid
+
+     5
+0 1 2 3 4 5
+|-|-|-|-|-|
 """
 
-import queue
+import re
 import tkinter as tk
 import numpy as np
 from PIL import Image, ImageTk
@@ -39,16 +43,25 @@ def parse_input():
             break
     line = '\n'.join(lines)
 
-    # TODO: test/handle multiline input
-    # TODO: test/handle multiple case input
     # TODO: better error handling
-    line = line.strip()
-    line = line.strip('{}')
-    line = line.split(',')
-    line = [pairs.strip().strip('""') for pairs in line]
-    line = [pairs.split() for pairs in line]
-    line = [[int(x) for x in pairs] for pairs in line]
+    re_bracketed_set = r'\{.*?\}'
+    re_rectangle = r'\d+\s+\d+\s+\d+\s+\d+'
+    line = line.replace('\n', '')
+    line = re.findall(re_bracketed_set, line)
+    line = [re.findall(re_rectangle, x) for x in line]
+    # line = line.strip('{}')
+    # line = line.split(',')
+    # line = [pairs.strip().strip('""') for pairs in line]
+    line = [[rectangles.split() for rectangles in rect_set] for rect_set in line]
+    line = [[[int(x) for x in rectangle] for rectangle in rect_set] for rect_set in line]
+
+    # line = [[int(x) for x in pairs] for pairs in line]
     return line
+
+
+def parse_output(fertile_areas):
+    """ """
+    print(' '.join(map(str, sorted(fertile_areas))))
 
 
 def mark_barren(field, barren_rectangles):
@@ -72,24 +85,30 @@ def flood_fill(field, coordinates):
     """
     if not field[coordinates[0]][coordinates[1]]:
         return field, 0
-    q = queue.Queue()
-    q.put(coordinates)
+    # NOTE: queue is WAY slower than a set.  it hits every coordinate 4x vs up to 4x.
+    # q = queue.Queue()
+    # q.put(coordinates)
+    # count = 0
+    # while not q.empty():
+    q = set()
+    q.add(coordinates)
     count = 0
-    while not q.empty():
-        n = q.get()
+    while q:
+        # n = q.get()
+        n = q.pop()
         if field[n[0]][n[1]]:
             count += 1
             field[n[0]][n[1]] = False
             if n[0] >= 0:
-                q.put((n[0] - 1, n[1]))  # up
+                q.add((n[0] - 1, n[1]))  # up
             try:
-                q.put((n[0] + 1, n[1]))  # down
+                q.add((n[0] + 1, n[1]))  # down
             except IndexError:
                 pass
             if n[1] >= 0:
-                q.put((n[0], n[1] - 1))  # left
+                q.add((n[0], n[1] - 1))  # left
             try:
-                q.put((n[0], n[1] + 1))  # right
+                q.add((n[0], n[1] + 1))  # right
             except IndexError:
                 pass
     return field, count
@@ -115,24 +134,26 @@ def main():
     # Assume bounds start at 0,0
     # field_bounds = [0, 0, 399, 599]
     field_size = (400, 600)
-    field = np.ones(field_size, dtype=bool)
-    barren_rectangles = parse_input()
-    field = mark_barren(field, barren_rectangles)
+    rectangle_sets = parse_input()
+    # barren_rectangles = parse_input()
+    for barren_rectangles in rectangle_sets:
+        field = np.ones(field_size, dtype=bool)
+        field = mark_barren(field, barren_rectangles)
 
-    # assorted tests
-    # marked land
-    # print(field)
-    # arable land
-    print(np.sum(field))
-    total = []
-    field, subtotal = flood_fill(field, (0, 0))
-    total.append(subtotal)
-    field, subtotal = flood_fill(field, (0, 580))
-    total.append(subtotal)
-    print(sorted(total), sum(total))
-    
-    # draw the field
-    # draw_field(field, field_size)
+        # assorted tests
+        # marked land
+        # print(field)
+        # draw_field(field, field_size)
+        # arable land
+        # print(np.sum(field))
+
+        total = []
+        for x in range(0, field_size[0]):
+            for y in range(0, field_size[1]):
+                if field[x][y]:
+                    field, subtotal = flood_fill(field, (x, y))
+                    total.append(subtotal)
+        parse_output(total)
 
 
 if __name__ == "__main__":
