@@ -38,6 +38,8 @@ def parse_input():
     while True:
         try:
             line = input()
+            # if line == '':
+            #     break
             lines.append(line)
         except EOFError:
             break
@@ -45,13 +47,13 @@ def parse_input():
 
     # TODO: better error handling
     re_bracketed_set = r'\{.*?\}'
-    re_rectangle = r'\d+\s+\d+\s+\d+\s+\d+'
+    re_rectangle = r'"-?\d+\s+-?\d+\s+-?\d+\s+-?\d+"'
     line = line.replace('\n', '')
     line = re.findall(re_bracketed_set, line)
     line = [re.findall(re_rectangle, x) for x in line]
     # line = line.strip('{}')
     # line = line.split(',')
-    # line = [pairs.strip().strip('""') for pairs in line]
+    line = [[rectangles.strip('""') for rectangles in x] for x in line]
     line = [[rectangles.split() for rectangles in rect_set] for rect_set in line]
     line = [[[int(x) for x in rectangle] for rectangle in rect_set] for rect_set in line]
 
@@ -59,9 +61,20 @@ def parse_input():
     return line
 
 
+def normalize_input(field_size, barren_rectangles):
+    """minmax to bounds"""
+    barren_rectangles = [[max(0, x) for x in b] for b in barren_rectangles]
+    barren_rectangles = [[min(field_size[0] - 1, x_0),
+                          min(field_size[1] - 1, y_0),
+                          min(field_size[0] - 1, x_1),
+                          min(field_size[1] - 1, y_1)] for x_0, y_0, x_1, y_1 in barren_rectangles]
+    return barren_rectangles
+
+
 def parse_output(fertile_areas):
-    """ """
-    print(' '.join(map(str, sorted(fertile_areas))))
+    if fertile_areas:
+        return ' '.join(map(str, sorted(fertile_areas)))
+    return 0
 
 
 def mark_barren(field, barren_rectangles):
@@ -96,21 +109,18 @@ def flood_fill(field, coordinates):
     while q:
         # n = q.get()
         n = q.pop()
-        if field[n[0]][n[1]]:
-            count += 1
-            field[n[0]][n[1]] = False
-            if n[0] >= 0:
-                q.add((n[0] - 1, n[1]))  # up
-            try:
+        try:
+            if field[n[0]][n[1]]:
+                count += 1
+                field[n[0]][n[1]] = False
+                if n[0] >= 0:
+                    q.add((n[0] - 1, n[1]))  # up
                 q.add((n[0] + 1, n[1]))  # down
-            except IndexError:
-                pass
-            if n[1] >= 0:
-                q.add((n[0], n[1] - 1))  # left
-            try:
+                if n[1] >= 0:
+                    q.add((n[0], n[1] - 1))  # left
                 q.add((n[0], n[1] + 1))  # right
-            except IndexError:
-                pass
+        except IndexError:
+            pass
     return field, count
 
 
@@ -128,23 +138,27 @@ def draw_field(field, field_size):
 
 
 def main():
-    """
-
-    """
+    """ """
     # Assume bounds start at 0,0
     # field_bounds = [0, 0, 399, 599]
     field_size = (400, 600)
     rectangle_sets = parse_input()
-    # barren_rectangles = parse_input()
     for barren_rectangles in rectangle_sets:
+        if not barren_rectangles:
+            continue
+        # size to bounds
+        barren_rectangles = normalize_input(field_size, barren_rectangles)
+
+        # print(barren_rectangles, end=' ') # if you want a list/file and see output inline with input
+
+        # build field
         field = np.ones(field_size, dtype=bool)
         field = mark_barren(field, barren_rectangles)
 
         # assorted tests
         # marked land
-        # print(field)
         # draw_field(field, field_size)
-        # arable land
+        # total arable land
         # print(np.sum(field))
 
         total = []
@@ -153,7 +167,7 @@ def main():
                 if field[x][y]:
                     field, subtotal = flood_fill(field, (x, y))
                     total.append(subtotal)
-        parse_output(total)
+        print(parse_output(total))
 
 
 if __name__ == "__main__":
