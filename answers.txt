@@ -1,24 +1,24 @@
-{"0 292 399 307"}   # 116400 117200 given test case; ask me why this doesn't match the test case
-{"48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"}    # 22816 192608 given test case
+{"0 292 399 307"}   # 116400 117200 # sample test case
+{"48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"}    # 22816 192608 # sample test case
 {"48 192 351 207", "48 392 351 407",
-"120 52 135 547", "260 52 275 547"} # 22816 192608 given test case with newline (parsing prettified)
-{"0 292 399 307"} {"48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"}  # 116400 117200, 22816 192608 multiple on one line
-{"0 0 0 0"} # 239999 single pixel at origin
-{"10 10 10 10"} # 239999 single pixel
-{"399 599 399 599"} # 239999 single pixel at edge
-# No output, blank line
-{"0 0 399 599"} # 0 Behold! The field in which I grow nothing. Lay thine eyes upon it and thou shalt see that it is barren.
-{"-1 0 10 10"}  # 239879 OOB negative X
-{"0 -1 10 10"}  # 239879 OOB negative Y
-{"0 0 400 0"}   # 239600 OOB pos x edge case
-{"0 0 401 0"}   # 239600 OOB pos x
-{"0 0 0 600"}   # 239600 OOB pos y edge case
-{"0 0 0 601"}   # 239400 OOB pos y
-{"0 0 0 0 0"}   # No output, malformed
-{"0 1 2 3 4"}   # No output, malformed
-zebra   # No output, not a coordinate
-"""""   # No output, not a coordinate, special character
-"\"\"\"\"   # No output, special character + escape
-"0 292 399 307" # No output, improperly formed
-correct{"0 291 399 306"}horse   # 116800 116800 right format inside noise
-{"0 291 399 306"}   # 116800 116800 centered, see first test case
+"120 52 135 547", "260 52 275 547"} # 22816 192608 # given test case with newline (parsing prettified)
+{"0 292 399 307"} {"48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"}  # 116400 117200, 22816 192608 # multiple on one line
+{"0 0 0 0"} # 239999 # single pixel at origin
+{"10 10 10 10"} # 239999 # single pixel
+{"399 599 399 599"} # 239999 # single pixel at edge
+# # No output, blank line
+{"0 0 399 599"} # 0 # Behold! The field in which I grow nothing. Lay thine eyes upon it and thou shalt see that it is barren.
+{"-1 0 10 10"}  # 239879 # OOB negative X
+{"0 -1 10 10"}  # 239879 # OOB negative Y
+{"0 0 400 0"}   # 239600 # OOB pos x edge case
+{"0 0 401 0"}   # 239600 # OOB pos x
+{"0 0 0 600"}   # 239600 # OOB pos y edge case
+{"0 0 0 601"}   # 239400 # OOB pos y
+{"0 0 0 0 0"}   # # No output, malformed
+{"0 1 2 3 4"}   # # No output, malformed
+zebra   # # No output, not a coordinate
+"""""   # # No output, not a coordinate, special character
+"\"\"\"\"   # # No output, special character + escape
+"0 292 399 307" # # No output, improperly formed
+correct{"0 291 399 306"}horse   # 116800 116800 # right format inside noise
+{"0 291 399 306"}   # 116800 116800 # centered, see first test case

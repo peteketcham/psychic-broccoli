@@ -28,3 +28,8 @@ echo {"48 192 351 207", "48 392 351 407", "120 52 135 547", "260 52 275 547"} | 
 ```
 python main.py < tests.txt
 ```
+
+`answers.txt` lists the input, output, and explanation for all the test cases in the format:
+```
+input # output # explanation
+```
