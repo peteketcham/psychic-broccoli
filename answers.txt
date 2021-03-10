@@ -22,3 +22,6 @@ zebra   # # No output, not a coordinate
 "0 292 399 307" # # No output, improperly formed
 correct{"0 291 399 306"}horse   # 116800 116800 # right format inside noise
 {"0 291 399 306"}   # 116800 116800 # centered, see first test case
+{"0 291 399 306", "0 320 399 326"}  #   5200 108800 116800  # three areas
+{"0 291 399 306", "0 308 399 310", "200 291 201 310", "203 294 205 310"}    #   1 193 201 115200 116800 # area of 1
+{"0 291 399 306", "0 308 399 310", "200 291 202 310", "203 294 205 310"}    #   193 201 115200 116800   # boxes out that area of 1
